@@ -1,0 +1,57 @@
+import speech_recognition as sr
+import pyttsx3
+import datetime
+
+class AgriculturalAssistant:
+    def __init__(self, native_language="en-US"):
+        self.native_language = native_language
+        self.recognizer = sr.Recognizer()
+        self.engine = pyttsx3.init()
+
+    def recognize_speech(self):
+        with sr.Microphone() as source:
+            print("Listening...")
+            audio = self.recognizer.listen(source)
+
+        try:
+            print("Recognizing...")
+            text = self.recognizer.recognize_google(audio, language=self.native_language)
+            print(f"You said: {text}")
+            self.process_command(text)
+        except sr.UnknownValueError:
+            print("Sorry, I didn't catch that.")
+            self.respond_vocally("Sorry, I didn't catch that.")
+        except sr.RequestError:
+            print("Sorry, I'm having trouble with my speech recognition service.")
+            self.respond_vocally("Sorry, I'm having trouble with my speech recognition service.")
+
+    def process_command(self, text):
+        if "weather" in text.lower():
+            self.get_weather()
+        elif "summer season" in text.lower():
+            self.respond_vocally("Ah, summer is here! Ready to embrace the sunshine with some summer crops? While paddy typically grows in flooded fields, here are some other summer-friendly crops you might enjoy cultivatingTomatoes , Cucumbers ,Corn ,Watermelon , Basil ,Okra .These beauties thrive in the warmth of summer. Have fun nurturing your garden! 🌞🌱")
+        elif "rainny season"in text.lower():
+            self.respond_vocally("Ah, rainy season is upon us! Time to get those fields ready for some lush growth. Here's a list of rainy season crops.Rice ,Corn ,Peanuts ,Soybeans ,Millet ,Sorghum , Turmeric . Happy planting and may your fields be abundant! 🌧️🌱")
+        elif "winter season" in text.lower():
+            self.respond_vocally("Brrr, winter's chill is here! Time to cozy up and maybe plan some winter activities. But if you're thinking about crops, here are some that endure the cold and thrive in the winter:   Kale ,Carrots ,  Brussels Sprouts ,  Spinach ,  Winter Squash ,  Beets , Cabbage ,Enjoy the winter harvest and stay warm")
+        elif "date" in text.lower():
+            self.get_date()
+        else:
+            self.respond_vocally("I'm sorry, I don't understand that command.")
+
+    def get_weather(self):
+        weather_info = "The weather today is sunny with a temperature of 25 degrees Celsius."
+        self.respond_vocally(weather_info)
+
+    def get_date(self):
+        now = datetime.datetime.now()
+        current_date = now.strftime("%A, %B %d, %Y")
+        self.respond_vocally(f"Today is {current_date}")
+
+    def respond_vocally(self, text):
+        self.engine.say(text)
+        self.engine.runAndWait()
+
+# Example usage:
+assistant = AgriculturalAssistant(native_language="en-US")
+assistant.recognize_speech()
